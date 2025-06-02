@@ -1,0 +1,11 @@
+{
+	"name": "com.alpolib.ui",
+	"displayName": "AlpoLib UI",
+	"author": { "name": "alpo" },
+	"version": "1.0.0",
+	"unity": "6000.1",
+	"description": "^^",
+	"dependencies": {
+		"com.alpolib.core": "1.0.0"
+	}
+}
