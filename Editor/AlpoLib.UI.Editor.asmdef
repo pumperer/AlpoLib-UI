@@ -1,9 +1,8 @@
 {
-    "name": "AlpoLib.UI",
+    "name": "AlpoLib.UI.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:591837093fc36a640bb4267910fc32f3",
-        "GUID:22b28092377e3e647bc3372c5273efb0"
+        "GUID:0f97ef63a7efc41479d869a6637bf4a5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
