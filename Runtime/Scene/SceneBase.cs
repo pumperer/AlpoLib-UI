@@ -1,6 +1,9 @@
 using System;
 using alpoLib.Data;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 
 namespace alpoLib.UI.Scene
@@ -159,14 +162,23 @@ namespace alpoLib.UI.Scene
 
         private void Awake()
         {
-            SceneUI = FindObjectOfType<T>();
+            SceneUI = FindFirstObjectByType<T>();
             SceneUI.CurrentScene = this;
             OnAwake();
+            
+        }
+
+        public override void OnOpen()
+        {
+            if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule m)
+                m.cancel.action.performed += OnCancel;
         }
 
         public override void OnClose()
         {
             SceneUI.OnClose();
+            if (EventSystem.current && EventSystem.current.currentInputModule is InputSystemUIInputModule m)
+                m.cancel.action.performed -= OnCancel;
         }
 
         public override void SetSceneInitData(SceneInitData data)
@@ -177,10 +189,16 @@ namespace alpoLib.UI.Scene
 
 		private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-                SceneUI.OnPressedBackButton();
-
             OnUpdate();
+        }
+
+        public void OnCancel(InputAction.CallbackContext context)
+        {
+            if (context.phase != InputActionPhase.Performed)
+                return;
+            
+            Debug.Log("OnCancel performed!");
+            SceneUI?.OnPressedBackButton();
         }
     }
 

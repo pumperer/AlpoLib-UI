@@ -25,12 +25,13 @@ namespace alpoLib.UI.Scene
         public static SceneBase CurrentScene => sceneStack.TryPeek(out var result) ? result : null;
         public static TransitionBase CurrentTransition { get; private set; }
 
-        public static async void Initialize(SceneBase startScene)
+        public static async Awaitable Initialize(SceneBase startScene)
         {
             Init(true);
             sceneStack.Push(startScene);
             while (Instance == null)
-                await Task.Yield();
+                await Awaitable.NextFrameAsync();
+            await Awaitable.NextFrameAsync();
             startScene.OnOpen();
         }
 
