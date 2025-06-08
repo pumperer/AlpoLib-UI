@@ -154,6 +154,8 @@ namespace alpoLib.UI.Scene
             while (!CurrentScene.IsLoadingComplete)
                 await Task.Yield();
             
+            GC.Collect();
+            
             USM.sceneLoaded += OnSceneLoaded;
             switch (resourceType)
             {
