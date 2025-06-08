@@ -1,5 +1,10 @@
 # AlpoLib UI
 
+## UIRoot
+- 앱 전반적으로 살아있는 Global UI Root 입니다.
+- Unity Scene 이 전환되더라도 항상 살아 있습니다.
+- Global Popup, Transition, Transparent Blocker, Loading UI 등을 표시합니다.
+
 ## Scene Manager
 - 유니티 씬과 클래스를 1:1로 매칭하여 관리하는 방식입니다.
 - 게임을 시작하는 최초 씬 클래스를 SceneBase를 상속 받아 선언합니다.
@@ -122,3 +127,9 @@ popup.Open();
 - 팝업이 열린 순서를 저장하고, 전후 관계를 자동으로 관리해 줍니다.
 - PopupBase.Open() 내에서 적절한 Track 을 찾아서 넣습니다.
 - 최소한 SceneBaseWithUI를 상속받은 Scene 또는, UIRoot 가 필요합니다.
+
+## Transition
+- Unity Scene 전환간 UIRoot 에 표시할 Transition 입니다.
+- In, Out 애니메이션을 가져야 합니다.
+- SceneBase 에서 OnTransitionComplete 인터페이스를 통해 트랜지션 완료 여부를 알 수 있습니다.
+- loading progress 를 표시할 수 있습니다.
