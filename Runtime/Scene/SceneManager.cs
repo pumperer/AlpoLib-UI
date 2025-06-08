@@ -201,7 +201,7 @@ namespace alpoLib.UI.Scene
                 return false;
             }
 
-            if (FindObjectOfType(scene) is not SceneBase sceneObject)
+            if (FindFirstObjectByType(scene) is not SceneBase sceneObject)
             {
                 Debug.LogError($"SceneManager.OpenSceneAsync : {newScene.name} 오브젝트가 로드된 씬에 없습니다.");
                 return false;
