@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace alpoLib.UI
+namespace alpoLib.UI.Hud
 {
     // [Flags]
     public enum HudItemPosition
