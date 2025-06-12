@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace alpoLib.UI
 {
-    [Flags]
+    // [Flags]
     public enum HudItemPosition
     {
         None = 0,
