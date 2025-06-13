@@ -214,11 +214,23 @@ namespace alpoLib.UI.Scene
             var loadingBlockAttr = sceneObject.GetType().GetCustomAttribute<LoadingBlockDefinitionAttribute>();
             if (loadingBlockAttr != null)
             {
-                if (Activator.CreateInstance(loadingBlockAttr.LoadingBlock) is SceneLoadingBlock loadingBlock)
+                var loadingBlockObj = Activator.CreateInstance(loadingBlockAttr.LoadingBlock);
+                if (loadingBlockObj is SceneLoadingBlock loadingBlock)
                 {
                     var initData = loadingBlock.MakeInitData(param);
                     sceneObject.SetSceneInitData(initData);
                 }
+                else if (loadingBlockAttr.LoadingBlock.BaseType.IsGenericType &&
+                         loadingBlockAttr.LoadingBlock.BaseType.GetGenericTypeDefinition() == typeof(SceneLoadingBlock<,>))
+                {
+                    var method = loadingBlockAttr.LoadingBlock.GetMethod("MakeInitData", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (method != null)
+                    {
+                        var initData = method.Invoke(loadingBlockObj, new object[] { param });
+                        sceneObject.SetSceneInitData((SceneInitData)initData);
+                    }
+                }
+
             }
             else
                 sceneObject.SetSceneInitData(null);
