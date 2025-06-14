@@ -134,8 +134,11 @@ namespace alpoLib.UI
             
             if (currentOpenedPopup != null)
             {
+                var tmp = popupDim.transform.parent;
+                popupDim.transform.parent = null;
                 var popupIndex = currentOpenedPopup.transform.GetSiblingIndex();
-                popupDim.transform.SetSiblingIndex(Mathf.Max(popupIndex - 1, 0));
+                popupDim.transform.parent = tmp;
+                popupDim.transform.SetSiblingIndex(Mathf.Max(popupIndex, 0));
             }
             
             // switch (dimPosition)
