@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using alpoLib.Data;
 using alpoLib.Res;
 using alpoLib.Util;
@@ -42,7 +40,7 @@ namespace alpoLib.UI.Scene
             UIRoot.Instance.ActiveTransparentLoadingUI = block;
         }
 
-        public async Task<bool> OpenSceneAsync<T>(string path = "", SceneParam param = null) where T : ISceneBase
+        public async Awaitable<bool> OpenSceneAsync<T>(string path = "", SceneParam param = null) where T : ISceneBase
         {
             if (isOpening)
                 return false;
@@ -85,7 +83,7 @@ namespace alpoLib.UI.Scene
             return success;
         }
 
-        public async Task<bool> UnloadCurrentSceneAsync()
+        public async Awaitable<bool> UnloadCurrentSceneAsync()
         {
             if (isOpening)
                 return false;
@@ -114,8 +112,9 @@ namespace alpoLib.UI.Scene
             //
             // USM.sceneUnloaded += OnSceneUnloaded;
             var operation = USM.UnloadSceneAsync(sceneName, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
-            while (!operation.isDone)
-                await Task.Yield();
+            await operation;
+            // while (!operation.isDone)
+            //     await Awaitable.NextFrameAsync();
 
             if (!sceneStack.TryPop(out var prevScene))
             {
@@ -133,7 +132,7 @@ namespace alpoLib.UI.Scene
             return true;
         }
 
-        private async Task<bool> OpenSceneAsync(Type scene, string scenePath, string sceneSubPath, string sceneName,
+        private async Awaitable<bool> OpenSceneAsync(Type scene, string scenePath, string sceneSubPath, string sceneName,
             LoadSceneMode loadSceneMode, SceneResourceType resourceType, SceneParam param = null)
         {
             if (CurrentScene != null && loadSceneMode == LoadSceneMode.Single)
@@ -152,7 +151,7 @@ namespace alpoLib.UI.Scene
                 CurrentScene.OnTransitionComplete(TransitionState.In);
 
             while (!CurrentScene.IsLoadingComplete)
-                await Task.Yield();
+                await Awaitable.NextFrameAsync();
             
             GC.Collect();
             
@@ -168,8 +167,9 @@ namespace alpoLib.UI.Scene
                 case SceneResourceType.Default:
                 {
                     var operation = USM.LoadSceneAsync(sceneName, loadSceneMode);
-                    while (!operation.isDone)
-                        await Task.Yield();
+                    await operation;
+                    // while (!operation.isDone)
+                    //     await Task.Yield();
                     break;
                 }
 #if USE_ASSETBUNDLE
@@ -178,7 +178,7 @@ namespace alpoLib.UI.Scene
                     var isAdditive = loadSceneMode == LoadSceneMode.Additive;
                     var operation = AssetBundleManager.LoadLevelAsync(sceneSubPath, sceneName, isAdditive, true);
                     while (!operation.IsDone())
-                        await Task.Yield();
+                        await Awaitable.NextFrameAsync();
                     break;
                 }
 #endif
@@ -238,7 +238,7 @@ namespace alpoLib.UI.Scene
             sceneObject.OnOpen();
 
             while (!sceneObject.IsLoadingComplete)
-                await Task.Yield();
+                await Awaitable.NextFrameAsync();
 
             await ProcessTransitionOutAsync(CurrentTransition);
 
@@ -248,7 +248,7 @@ namespace alpoLib.UI.Scene
             return true;
         }
 
-        private async Task<TransitionBase> ProcessTransitionInAsync(Type scene, string transitionName = null)
+        private async Awaitable<TransitionBase> ProcessTransitionInAsync(Type scene, string transitionName = null)
         {
             TransitionBase currentTransition = null;
             var attrs = scene.GetCustomAttributes<SceneTransitionAttribute>().ToList();
@@ -283,12 +283,12 @@ namespace alpoLib.UI.Scene
                 transitionComplete = true;
 
             while (!transitionComplete)
-                await Task.Yield();
+                await Awaitable.NextFrameAsync();
 
             return currentTransition;
         }
 
-        private async Task ProcessTransitionOutAsync(TransitionBase currentTransition)
+        private async Awaitable ProcessTransitionOutAsync(TransitionBase currentTransition)
         {
             var transitionComplete = false;
             if (currentTransition != null)
@@ -301,7 +301,7 @@ namespace alpoLib.UI.Scene
                 transitionComplete = true;
 
             while (!transitionComplete)
-                await Task.Yield();
+                await Awaitable.NextFrameAsync();
         }
 
         private TransitionBase FindTransition(Type transitionType)
@@ -323,7 +323,7 @@ namespace alpoLib.UI.Scene
                 return target;
         }
 
-        private async Task<TransitionBase> FindTransitionAsync(Type transitionType)
+        private async Awaitable<TransitionBase> FindTransitionAsync(Type transitionType)
         {
             var transitions = UIRoot.Instance.TransitionCanvas.GetComponentsInChildren<TransitionBase>(true);
             if (transitions.Length == 0)
