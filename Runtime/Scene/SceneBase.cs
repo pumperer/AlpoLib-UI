@@ -123,10 +123,17 @@ namespace alpoLib.UI.Scene
 
         public virtual void OnOpen()
         {
-            
+        }
+        
+        public virtual void OnOpened()
+        {
         }
         
         public virtual void OnClose()
+        {
+        }
+
+        public virtual void OnClosed()
         {
         }
 

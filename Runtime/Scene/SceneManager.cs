@@ -148,7 +148,10 @@ namespace alpoLib.UI.Scene
 
             CurrentTransition = await ProcessTransitionInAsync(scene, param?.TransitionName);
             if (CurrentScene != null)
+            {
                 CurrentScene.OnTransitionComplete(TransitionState.In);
+                CurrentScene.OnClosed();
+            }
 
             while (!CurrentScene.IsLoadingComplete)
                 await Awaitable.NextFrameAsync();
@@ -243,6 +246,7 @@ namespace alpoLib.UI.Scene
             await ProcessTransitionOutAsync(CurrentTransition);
 
             CurrentScene.OnTransitionComplete(TransitionState.Out);
+            CurrentScene.OnOpened();
             CurrentTransition = null;
 
             return true;
